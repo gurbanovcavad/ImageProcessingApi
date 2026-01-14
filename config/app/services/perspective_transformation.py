@@ -8,13 +8,10 @@ class PerspectiveService:
         des = params.get("destination")
         src = np.array(source, np.float32)
         dst = np.array(des, dtype=np.float32)
-        for i in range(4):    
+        # for i in range(4):    
+        #     cv2.circle(image, source[i], 5, (0,0,255), -1)
+        #     cv2.circle(image, des[i], 5, (255,0,0), -1)
             
-            cv2.circle(image, source[i], 5, (0,0,255), -1)
-            
-            cv2.circle(image, des[i], 5, (255,0,0), -1)
-            
-        cv2.imwrite("/tmp/images/2.png", image)
         matrix = cv2.getPerspectiveTransform(src, dst)
         transformed_image = cv2.warpPerspective(image, matrix, (w, h))
         return transformed_image, None

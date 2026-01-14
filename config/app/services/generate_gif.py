@@ -2,12 +2,14 @@ import cv2
 from PIL import Image
 
 class GifGenerationService:
-    def run(self, images, frame_interval, name=None):
+    def run(self, images, frame_interval, name):
         if frame_interval == None or frame_interval <= 0:
             raise Exception("Invalid Gif Parameters")
         duration = int(frame_interval * 1000)
         gif = self.cv2_to_pil(images)
-        gif[0].save(name if name != None else "temp.gif", save_all=True, append_images=gif[1:], duration=duration, loop=0, optimize=False)
+        name += ".gif"
+        gif[0].save(name, save_all=True, append_images=gif[1:], duration=duration, loop=0, optimize=False)
+        return name
 
     def cv2_to_pil(self, images):
         max_h = max(img.shape[0] for img in images)

@@ -88,7 +88,9 @@ class ImageProcessingService:
                 input_image = ImageArtifact.objects.create(request=request, role="input", file_path=input_file_path)
                 cv2.imwrite(input_path + input_filename + "." + input_extension, image)
                 output = image
+                # to check if the operations succeeded on the images[i] 
                 ok = True
+                
                 for j, operation in enumerate(pipeline[i]):
                     h, w = image.shape[:2] 
                     try:
@@ -99,6 +101,7 @@ class ImageProcessingService:
                         fail = True
                         ok = False
                         break
+                
                 if not ok:
                     continue
                 format = extensions[i]
@@ -115,6 +118,7 @@ class ImageProcessingService:
                         break
                 if not ok:
                    continue 
+               
                 try: 
                     output_filename = str(request.id) + "-" + str(i)
                     output_extension = format
@@ -122,9 +126,9 @@ class ImageProcessingService:
                     output_image = ImageArtifact.objects.create(request=request, role="output", file_path=output_file_path)
                     
                     if database:
-                        success, buffer = cv2.imencode("." + output_extension, output)
+                        suc, buffer = cv2.imencode("." + output_extension, output)
                         
-                        if not success:
+                        if not suc:
                             raise Exception("Failed to Encode Image to Base64 string")
                         image_base64 = base64.b64encode(buffer).decode("utf-8")
                         output_image.base64_data = image_base64
@@ -136,20 +140,23 @@ class ImageProcessingService:
                     fail = True
                     ok = False
                     error = str(e)
-                    
                 if ok: 
                     success = True
 
             if gif and len(images) > 1:
                 try:
-                    self.gif_generation_service.run(images, frame_interval, request.id)
+                    gif_name = self.gif_generation_service.run(images, frame_interval, str(output_path) + str(request.id))
+                    outputs.append(gif_name)
                 except Exception as e:
                     error = str(e)
                     ok = False
                     fail = True
+            elif gif and len(images) < 2:
+                ok = False
+                fail = True
+                
             if ok:
                 success = True
-                
             status = ""
             if fail and success:
                 status = "partial success"
@@ -189,6 +196,12 @@ class ImageProcessingService:
     def get(self, path: str):
         try:
             format = path[-3:]
+            if format == "gif":
+                with open(path, "rb") as gif:
+                    res = base64.b64encode(gif.read()).decode('utf-8')
+                
+                    return res
+                
             format = ("jpeg" if format == "jpg" else format)
             image = Image.open(path)
             buffer = io.BytesIO()
