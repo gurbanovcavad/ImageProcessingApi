@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16
+    container_name: image_processing_db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - image_processing_pgdata:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: image_processing_backend
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - image_processing_images:/images
+
+volumes:
+  image_processing_pgdata:
+  image_processing_images:
