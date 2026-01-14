@@ -33,4 +33,4 @@ class ImageArtifact(models.Model):
     # input or output
     role = models.CharField(max_length=25, choices=ROLE_CHOICES)
     file_path = models.ForeignKey(FilePath, null=True, blank=False, on_delete=models.SET_NULL, related_name="path")
-    base64_data = models.BinaryField(null=True, blank=False)
+    base64_data = models.TextField(null=True, blank=False)

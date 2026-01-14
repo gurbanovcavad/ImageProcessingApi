@@ -147,7 +147,9 @@ class ImageProcessingService:
                     error = str(e)
                     ok = False
                     fail = True
-                    
+            if ok:
+                success = True
+                
             status = ""
             if fail and success:
                 status = "partial success"

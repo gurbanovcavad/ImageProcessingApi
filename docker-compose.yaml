@@ -1,5 +1,5 @@
 services:
-  db:
+  image_processing_db:
     image: postgres:16
     container_name: image_processing_db
     env_file:
@@ -13,13 +13,13 @@ services:
     volumes:
       - image_processing_pgdata:/var/lib/postgresql/data
 
-  web:
+  image_processing_web:
     build: .
     container_name: image_processing_backend
     env_file:
       - .env
     depends_on:
-      - db
+      - image_processing_db
     ports:
       - "8000:8000"
     command: >
