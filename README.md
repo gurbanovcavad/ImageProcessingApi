@@ -17,7 +17,7 @@ docker compose up --build
 * in the base64 string form 
 
 ## Supported Input Types:
-* multipart/form-data format, where sends images via form submissions and add operations (text field) which is in the json form and then converted to json
+* multipart/form-data format, where the user sends images via form submissions and add operations (text field) which is in the json format and then converted to json
 * base64 string format, where user sends images and corressponding operations altogether   
 
 ## Endpoints:
